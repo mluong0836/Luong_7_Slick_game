@@ -25,7 +25,7 @@ public class Enemy {
 
     boolean[][] eblocked = Blocked.getblocked();
 
-    private Animation skeleton, skup, skdown, skleft, skright, skwait, skdead;
+    private Animation skeleton, skup, skdown, skleft, skright, skwait, skdead, skattack_left, skattack_right, skattack_down, skattack_up;
 
     int SIZE = 64;
     
@@ -127,7 +127,7 @@ public class Enemy {
         this.mydirection = Direction.WAIT;
 
 
-        SpriteSheet skeletonSS = new SpriteSheet("res/skeletonwspearsprites.png",
+        SpriteSheet skeletonSS = new SpriteSheet("res/ogre.png",
 
                 64, 64, 0);//size of skeletons
 
@@ -249,6 +249,73 @@ public class Enemy {
 
         skdead.addFrame(skeletonSS.getSprite(5, 20), 733);
 
+       // sprite facing right
+        skattack_right = new Animation();
+
+        skattack_right.setAutoUpdate(true);
+        
+        skattack_right.addFrame(skeletonSS.getSprite(1, 31), 130);
+
+        skattack_right.addFrame(skeletonSS.getSprite(4, 31), 130);
+
+        skattack_right.addFrame(skeletonSS.getSprite(7, 31), 130);
+
+        skattack_right.addFrame(skeletonSS.getSprite(10, 31), 130);
+        
+        skattack_right.addFrame(skeletonSS.getSprite(13, 31), 130);  
+        
+        skattack_right.addFrame(skeletonSS.getSprite(16, 31), 130);
+        
+        // sprite facing left
+        skattack_left = new Animation();
+        
+        skattack_left.setAutoUpdate(true);
+
+        skattack_left.addFrame(skeletonSS.getSprite(1, 25), 130);
+
+        skattack_left.addFrame(skeletonSS.getSprite(4, 25), 130);
+
+        skattack_left.addFrame(skeletonSS.getSprite(7, 25), 130);
+
+        skattack_left.addFrame(skeletonSS.getSprite(10, 25), 130);
+        
+        skattack_left.addFrame(skeletonSS.getSprite(13, 25), 130);
+        
+        skattack_left.addFrame(skeletonSS.getSprite(16, 25), 130);
+        
+        // sprite facing down
+        skattack_down = new Animation();
+        
+        skattack_down.setAutoUpdate(true);
+
+        skattack_down.addFrame(skeletonSS.getSprite(1, 28), 130);
+
+        skattack_down.addFrame(skeletonSS.getSprite(4, 28), 130);
+
+        skattack_down.addFrame(skeletonSS.getSprite(7, 28), 130);
+
+        skattack_down.addFrame(skeletonSS.getSprite(10, 28), 130);
+        
+        skattack_down.addFrame(skeletonSS.getSprite(13, 28), 130);
+        
+        skattack_down.addFrame(skeletonSS.getSprite(16, 28), 130);
+        
+        // sprite facing up
+        skattack_up = new Animation();
+        
+        skattack_up.addFrame(skeletonSS.getSprite(1, 22), 130);
+
+        skattack_up.addFrame(skeletonSS.getSprite(4, 22), 130);
+
+        skattack_up.addFrame(skeletonSS.getSprite(7, 22), 130);
+
+        skattack_up.addFrame(skeletonSS.getSprite(10, 22), 130);
+        
+        skattack_up.addFrame(skeletonSS.getSprite(13, 22), 130);  
+        
+        skattack_up.addFrame(skeletonSS.getSprite(16, 22), 130);
+
+        
         
 
         currentanime = skwait;

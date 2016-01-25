@@ -35,6 +35,16 @@ public class Player {
 	public static float pdelta;
 
 	public static Animation playeranime;
+        
+        public boolean blue;
+        
+        public boolean yellow;
+        
+        public boolean green;
+        
+        public boolean pink;
+        
+        public boolean last;
 
 	public static void setpdelta(float somenum) {
 
@@ -83,4 +93,29 @@ public class Player {
 		hitboxY = getplayershitboxY();
 
 	}
+        
+        public void stage1() {
+            
+            blue = true;
+    
+}
+        public void stage2() {
+            
+            yellow = true;
+        }
+        
+        public void stage3(){
+    
+            green = true;
+}
+        public void stage4() {
+    
+            green = true;
+}
+        
+        public void stage5() {
+            
+            last = true;            
+            
+        }
 }

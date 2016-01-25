@@ -53,6 +53,11 @@ public class Unwavering extends BasicGameState {
     public Item healthpotion, healthpotion1;
     public Item1 speedpotion, speedpotion1;
     public Itemwin antidote;
+    public Blue bluekey;
+    public Yellow yellowkey;//class for yellowkeys
+    public Green greenkey;//class for greenkeys
+    public Pink pinkkey; //class for pinkkeys
+    public Finalitem lastitem;//last item last bluekey
 
     public Ninja stormy, daniel, sword;
 
@@ -60,6 +65,13 @@ public class Unwavering extends BasicGameState {
     //first public enemy
 
     public ArrayList<Item> stuff = new ArrayList();
+    
+    public ArrayList<Blue> unlock1 = new ArrayList();
+    public ArrayList<Yellow> unlock2 = new ArrayList();
+    public ArrayList<Green> unlock3 = new ArrayList();
+    public ArrayList<Pink> unlock4 = new ArrayList();
+    public ArrayList<Finalitem> unlock5 = new ArrayList();
+
 
     public ArrayList<Item1> stuff1 = new ArrayList();
 
@@ -70,7 +82,14 @@ public class Unwavering extends BasicGameState {
     public ArrayList<Enemy> bonez = new ArrayList();
 
     private boolean[][] hostiles;
-
+    
+    // to let the game know which direction the player moves
+    
+     boolean direction_right;
+     boolean direction_left;
+     boolean direction_up;
+     boolean direction_down;
+     
     private static TiledMap grassMap;
 
     private static AppGameContainer app;
@@ -80,7 +99,8 @@ public class Unwavering extends BasicGameState {
     public static int counter = 0;
 
     // Player stuff
-    private Animation sprite, up, down, left, right, wait;
+    private Animation sprite, up, down, left, right, wait, attackfrom_right, attackfrom_left, attackfrom_up, 
+                      attackfrom_down, hurt;
 
     /**
      *
@@ -89,7 +109,7 @@ public class Unwavering extends BasicGameState {
      * on tile properties
      */
     // changed to match size of sprites & map
-    private static final int SIZE = 64;
+    private static final int SIZE = 32;
 
     // screen width and height won't change
     private static final int SCREEN_WIDTH = 1000;
@@ -121,7 +141,7 @@ public class Unwavering extends BasicGameState {
         // and classes
         // *********************************************************************************
         SpriteSheet runningSS = new SpriteSheet(
-                "res/ogrespritesheet.png", 64, 64, 0);
+                "res/player.png", 64, 64, 0);
 
 		// System.out.println("Horizontal count: "
         // +runningSS.getHorizontalCount());
@@ -130,13 +150,13 @@ public class Unwavering extends BasicGameState {
 
         up.setAutoUpdate(true);
 
-        up.addFrame(runningSS.getSprite(0, 8), 330);
+        up.addFrame(runningSS.getSprite(0, 1), 330);
 
-        up.addFrame(runningSS.getSprite(1, 8), 330);
+        up.addFrame(runningSS.getSprite(1, 1), 330);
 
-        up.addFrame(runningSS.getSprite(2, 8), 330);
+        up.addFrame(runningSS.getSprite(2, 1), 330);
 
-        up.addFrame(runningSS.getSprite(3, 8), 330);
+        up.addFrame(runningSS.getSprite(3, 1), 330);
 
         up.addFrame(runningSS.getSprite(4, 8), 330);
 
@@ -225,10 +245,91 @@ public class Unwavering extends BasicGameState {
         wait.addFrame(runningSS.getSprite(2, 14), 733);
 
         wait.addFrame(runningSS.getSprite(3, 14), 733);
-
-		// wait.addFrame(runningSS.getSprite(2, 14), 733);
+        
+        // wait.addFrame(runningSS.getSprite(2, 14), 733);
         // wait.addFrame(runningSS.getSprite(5, 14), 333);
         sprite = wait;
+        
+        // sprite facing right
+        attackfrom_right = new Animation();
+
+        attackfrom_right.setAutoUpdate(true);
+        
+        
+        attackfrom_right.addFrame(runningSS.getSprite(1, 31), 130);
+
+        attackfrom_right.addFrame(runningSS.getSprite(4, 31), 130);
+
+        attackfrom_right.addFrame(runningSS.getSprite(7, 31), 130);
+
+        attackfrom_right.addFrame(runningSS.getSprite(10, 31), 130);
+        
+        attackfrom_right.addFrame(runningSS.getSprite(13, 31), 130);  
+        
+        attackfrom_right.addFrame(runningSS.getSprite(16, 31), 130);       
+        
+        // sprite facing left
+        attackfrom_left = new Animation();
+        
+        attackfrom_left.setAutoUpdate(true);
+
+        attackfrom_left.addFrame(runningSS.getSprite(1, 25), 130);
+
+        attackfrom_left.addFrame(runningSS.getSprite(4, 25), 130);
+
+        attackfrom_left.addFrame(runningSS.getSprite(7, 25), 130);
+
+        attackfrom_left.addFrame(runningSS.getSprite(10, 25), 130);
+        
+        attackfrom_left.addFrame(runningSS.getSprite(13, 25), 130);
+        
+        attackfrom_left.addFrame(runningSS.getSprite(16, 25), 130);
+        
+        // sprite facing down
+        attackfrom_down = new Animation();
+        
+        attackfrom_down.setAutoUpdate(true);
+
+        attackfrom_down.addFrame(runningSS.getSprite(1, 28), 130);
+
+        attackfrom_down.addFrame(runningSS.getSprite(4, 28), 130);
+
+        attackfrom_down.addFrame(runningSS.getSprite(7, 28), 130);
+
+        attackfrom_down.addFrame(runningSS.getSprite(10, 28), 130);
+        
+        attackfrom_down.addFrame(runningSS.getSprite(13, 28), 130);
+        
+        attackfrom_down.addFrame(runningSS.getSprite(16, 28), 130);
+        
+        // sprite facing up
+        attackfrom_up = new Animation();
+        
+        attackfrom_up.addFrame(runningSS.getSprite(1, 22), 130);
+
+        attackfrom_up.addFrame(runningSS.getSprite(4, 22), 130);
+
+        attackfrom_up.addFrame(runningSS.getSprite(7, 22), 130);
+
+        attackfrom_up.addFrame(runningSS.getSprite(10, 22), 130);
+        
+        attackfrom_up.addFrame(runningSS.getSprite(13, 22), 130);  
+        
+        attackfrom_up.addFrame(runningSS.getSprite(16, 22), 130);
+        
+        //when hurt
+        hurt = new Animation();
+        
+        hurt.addFrame(runningSS.getSprite(0, 20), 230);
+
+        hurt.addFrame(runningSS.getSprite(1, 20), 230);
+
+        hurt.addFrame(runningSS.getSprite(2, 20), 230);
+        
+        hurt.addFrame(runningSS.getSprite(3, 20), 130);
+
+
+		
 
 		// *****************************************************************
         // Obstacles etc.
@@ -249,7 +350,8 @@ public class Unwavering extends BasicGameState {
 
             for (int yAxis = 0; yAxis < grassMap.getHeight(); yAxis++) {
 
-				// int tileID = grassMap.getTileId(xAxis, yAxis, 0);
+				 //int tileID = grassMap.getTileId(xAxis, yAxis, 0);
+                
                 // Why was this changed?
                 // It's a Different Layer.
                 // You should read the TMX file. It's xml, i.e.,human-readable
@@ -315,6 +417,17 @@ public class Unwavering extends BasicGameState {
         dojo.add(stormy);
         dojo.add(daniel);
         dojo.add(sword);
+        
+        bluekey = new Blue(112,755); //this is the blue key that will be visible when enemy dies
+        yellowkey = new Yellow(160, 1274); //this is the yellow key that will be visible when enemy dies
+        greenkey = new Green(160, 274); //this is the green key that will be visible when enemy dies
+        pinkkey = new Pink(160, 228); //this is the pink key that will be visible when enemy dies
+        lastitem = new Finalitem(200, 500); //this is the final blue key that will be visible when enemy dies
+        unlock1.add(bluekey); 
+        unlock2.add(yellowkey);
+        unlock3.add(greenkey);
+        unlock4.add(pinkkey);
+        unlock5.add(lastitem);
 
         flava = new Enemy(300, 300);
         flav = new Enemy(256, 256);
@@ -342,9 +455,9 @@ public class Unwavering extends BasicGameState {
 
         camera.translateGraphics();
 
-		// it helps to add status reports to see what's going on
+        // it helps to add status reports to see what's going on
         // but it gets old quickly
-        // System.out.println("Current X: " +player.x + " \n Current Y: "+ y);
+        System.out.println("Current X: " +Player.x + " \n Current Y: "+ Player.y);
         Image s5 = new Image("res/s5.png");
         Image s7 = new Image("res/s7.png");
         Image wall_right_light = new Image("res/0160_wall_right_light.bmp");
@@ -377,47 +490,22 @@ public class Unwavering extends BasicGameState {
         Image pokemon_ice_1 = new Image("res/pokemon_ice_1.png");
         Image pokemon_ice2 = new Image("res/pokemon_ice2.png");
 
-//        s5.draw(42, 42);
-//        s7.draw(42, 42);
-//        wall_right_light.draw(42, 42);
-//        wall_top_light.draw(42, 42);
-//        wall1_top_light.draw(42, 42);
-//        wall_left_bottom_corner.draw(42, 42);
-//        wall_right_bottom_corner.draw(42, 42);
-//        wall_left_corner.draw(42, 42);
-//        wall_left_vert.draw(42, 42);
-//        bottom_wall_horz.draw(42, 42);
-//        wall_right_vert.draw(42, 42);
-//        wall_right_corner.draw(42, 42);
-//        wall_horz.draw(42, 42);
-//        floor_default.draw(42, 42);
-//        floor1_default.draw(42, 42);
-//        floor2_default.draw(42, 42);
-//        floor0_default.draw(42, 42);
-//        floor3_default.draw(42, 42);
-//        reddpotion.draw(42, 42);
-//        purplepotion.draw(42, 42);
-//        greenpotion.draw(42, 42);
-//        bluepotion.draw(42, 42);
-//        blackpotion.draw(42, 42);
-//        Luong_7_lava_entrance.draw(42, 42);
-//        bombs.draw(42, 42);
-//        lava_boss.draw(42, 42);
-//        chest_item.draw(42, 42);
-//        ice_castle.draw(42, 42);
-//        bridge.draw(42, 42);
-//        pokemon_ice_1.draw(42, 42);
-//        pokemon_ice2.draw(42, 42);
+ 
 
         sprite.draw((int) Player.x, (int) Player.y);
 
         //g.drawString("x: " + (int)player.x + "y: " +(int)player.y , player.x, player.y - 10);
-        g.drawString("Health: " + Player.health / 1000, camera.cameraX + 10,
-                camera.cameraY + 10);
+        //g.drawString("Health: " + Player.health / 1000, camera.cameraX + 10,
+               // camera.cameraY + 10);
 
         g.drawString("speed: " + (int) (Player.speed * 10), camera.cameraX + 10,
                 camera.cameraY + 25);
-
+        
+        //g.drawString(Current X: " + Player.x + "  Current Y: "+ Player.y));
+        //Current X: " +Player.x + " \n Current Y: "+ Player.y
+        g.drawString("Current X: " + Player.x , camera.cameraX + 10, camera.cameraY + 10);
+        
+        g.drawString("Current Y: " + Player.y, camera.cameraX + 30, camera.cameraY + 30);
         //g.draw(player.rect);
         g.drawString("time passed: " + counter / 1000, camera.cameraX + 600, camera.cameraY);
         // moveenemies();
@@ -445,7 +533,7 @@ public class Unwavering extends BasicGameState {
         for (Enemy e : bonez) {
             if (e.isalive) {
                 e.currentanime.draw(e.Bx, e.By);
-                moveenemies();
+                e.move();
                 //draw the hitbox
                 //g.draw(e.rect);
             }
@@ -480,6 +568,110 @@ public class Unwavering extends BasicGameState {
                 // draw the hitbox
                 //g.draw(w.hitbox);
 
+            }
+        }
+        
+        for (Blue b : unlock1) { //stage1
+            if (b.isvisible) {
+                b.currentImage.draw(b.x, b.y);
+                // draw the hitbox
+                //g.draw(i.hitbox);
+
+            }
+        }
+        
+        for (Blue b : unlock1) {
+
+            if (Player.rect.intersects(b.hitbox)) {
+                //System.out.println("yay");
+                if (b.isvisible) {
+
+                    Player.speed += .1f;
+                    b.isvisible = false;
+                }
+
+            }
+        }
+        
+        for (Yellow y : unlock2) { //stage1
+            if (y.isvisible) {
+                y.currentImage.draw(y.x, y.y);
+                // draw the hitbox
+                //g.draw(i.hitbox);
+
+            }
+        }
+        
+        for (Yellow y : unlock2) {
+
+            if (Player.rect.intersects(y.hitbox)) {
+                //System.out.println("yay");
+                if (y.isvisible) {
+
+                    Player.speed += .1f;
+                    y.isvisible = false;
+                }
+
+            }
+        }
+        
+         for (Green gr : unlock3) { //stage1
+            if (gr.isvisible) {
+                gr.currentImage.draw(gr.x, gr.y);
+                // draw the hitbox
+                //g.draw(i.hitbox);
+
+            }
+        }
+        
+        for (Green gr : unlock3) {
+            
+            if(Player.rect.intersects(gr.hitbox)) {
+                if (gr.isvisible) {
+                    
+                    Player.speed += .1f;
+                    gr.isvisible = false;
+                }
+            }
+        }
+        
+        for (Pink p : unlock4) { //stage1
+            if (p.isvisible) {
+                p.currentImage.draw(p.x, p.y);
+                // draw the hitbox
+                //g.draw(i.hitbox);
+
+            }
+        }
+        
+        for (Pink p : unlock4) {
+            
+            if(Player.rect.intersects(p.hitbox)) {
+                if (p.isvisible) {
+                    
+                    Player.speed += .1f;
+                    p.isvisible = false;
+                }
+            }
+        }
+        
+        for (Finalitem f : unlock5) { //stage1
+            if (f.isvisible) {
+                f.currentImage.draw(f.x, f.y);
+                // draw the hitbox
+                //g.draw(i.hitbox);
+
+            }
+        }
+        
+        for (Finalitem f : unlock5) {
+            
+            if(Player.rect.intersects(f.hitbox)) {
+                if (f.isvisible) {
+                    
+                    Player.speed += .1f;
+                    f.isvisible = false;
+                }
             }
         }
 
@@ -518,6 +710,12 @@ public class Unwavering extends BasicGameState {
         if (input.isKeyDown(Input.KEY_UP)) {
 
             sprite = up;
+            
+            //my booleans to check the direction
+            direction_right = false;
+            direction_left = false;
+            direction_up = true;
+            direction_down = false;
 
             float fdsc = (float) (fdelta - (SIZE * .15));
 
@@ -533,6 +731,12 @@ public class Unwavering extends BasicGameState {
         } else if (input.isKeyDown(Input.KEY_DOWN)) {
 
             sprite = down;
+            
+            //my booleans to check the direction
+            direction_right = false;
+            direction_left = false;
+            direction_up = false;
+            direction_down = true;
 
             if (!isBlocked(Player.x, Player.y + SIZE + fdelta)
                     || !isBlocked(Player.x + SIZE - 1, Player.y + SIZE + fdelta)) {
@@ -546,6 +750,12 @@ public class Unwavering extends BasicGameState {
         } else if (input.isKeyDown(Input.KEY_LEFT)) {
 
             sprite = left;
+            
+            //my booleans to check the direction
+            direction_right = false;
+            direction_left = true;
+            direction_up = false;
+            direction_down = false;
 
             if (!(isBlocked(Player.x - fdelta, Player.y) || isBlocked(Player.x
                     - fdelta, Player.y + SIZE - 1))) {
@@ -559,6 +769,12 @@ public class Unwavering extends BasicGameState {
         } else if (input.isKeyDown(Input.KEY_RIGHT)) {
 
             sprite = right;
+            
+            //my booleans to check the direction
+            direction_right = true;
+            direction_left = false;
+            direction_up = false;
+            direction_down = false;
 
             // the boolean-kludge-implementation
             if (cangoright
@@ -572,6 +788,27 @@ public class Unwavering extends BasicGameState {
 
             } // else { System.out.println("Right limit reached: " +
             // rightlimit);}
+
+        } else if (input.isKeyDown(Input.KEY_SPACE)) {
+
+            //sprite = attackfrom_down;
+            
+            if (direction_right) {
+                
+                sprite = attackfrom_right;
+                
+            } else if(direction_left) {
+                
+                sprite = attackfrom_left;
+           
+            }else if(direction_up) {
+                
+                sprite = attackfrom_up;
+                
+            }else if(direction_down){
+                
+                sprite = attackfrom_down;
+            }     
 
         }
 
@@ -638,7 +875,9 @@ public class Unwavering extends BasicGameState {
         }
 
     }
-
+    
+        
+        
     public int getID() {
 
         return 1;
